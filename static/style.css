@@ -401,12 +401,45 @@ button {
 }
 #team-name-inputs input { margin-top: 0; }
 
+.sort-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.sort-tab {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 7px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+.sort-tab.active {
+  background: var(--accent);
+  color: #1a1300;
+  border-color: var(--accent);
+}
+
 #roster-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.roster-group + .roster-group {
+  margin-top: 12px;
+}
+.roster-group h4 {
+  margin: 0 0 4px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.roster-group ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-height: 300px;
-  overflow-y: auto;
 }
 #roster-list li {
   padding: 8px 0;
@@ -421,4 +454,8 @@ button {
   padding: 2px 6px;
   border-radius: 4px;
   background: rgba(255,255,255,0.08);
+}
+#roster-list .empty {
+  color: var(--text-dim);
+  padding: 8px 0;
 }

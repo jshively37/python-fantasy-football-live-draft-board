@@ -29,6 +29,10 @@ the network — handy if you want the board on a TV while controlling it from a 
    team names and settings.
 4. The search box and position tabs (QB/RB/WR/TE/K/DEF) help you find a player fast in a
    loud room. "show drafted" reveals who's already gone if you want to double check.
+5. Click any team in the **Draft Order** sidebar to see that team's full roster. It's
+   grouped **By Position** by default (all QBs together, all RBs together, etc.) so an
+   owner can quickly check what they still need — toggle to **By Draft Order** to see picks
+   in the order they were made instead.
 
 State is saved to `data/draft_state.json` after every action, so if the server restarts
 mid-draft (or a browser tab crashes), just reload the page and everything picks up where

@@ -9,10 +9,14 @@ const API = {
   reset: "/api/reset",
 };
 
+const POSITION_ORDER = ["QB", "RB", "WR", "TE", "K", "DEF"];
+
 let state = null;
 let activePosFilter = "ALL";
 let showDrafted = false;
 let pendingPlayerId = null;
+let activeRosterTeamId = null;
+let rosterSortMode = "position";
 let localRemaining = null;
 let lastWholeSecond = null;
 let audioCtx = null;
@@ -82,6 +86,9 @@ function render() {
   renderGrid();
   renderTeamOrder();
   renderHistory();
+  if (activeRosterTeamId !== null && !document.getElementById("roster-modal").classList.contains("hidden")) {
+    renderRosterList();
+  }
 }
 
 function renderTopBar() {
@@ -217,21 +224,67 @@ function closeConfirmModal() {
 // ---------- Roster modal ----------
 
 function openRosterModal(teamId) {
+  activeRosterTeamId = teamId;
   const team = state.teams.find((t) => t.id === teamId);
   document.getElementById("roster-title").textContent = `${team.name} Roster`;
+  document.querySelectorAll(".sort-tab").forEach((b) => {
+    b.classList.toggle("active", b.dataset.sort === rosterSortMode);
+  });
+  renderRosterList();
+  document.getElementById("roster-modal").classList.remove("hidden");
+}
+
+function renderRosterList() {
   const list = document.getElementById("roster-list");
   list.innerHTML = "";
-  const roster = state.rosters[teamId] || [];
+  const roster = state.rosters[activeRosterTeamId] || [];
+
   if (roster.length === 0) {
-    list.innerHTML = `<li style="color:var(--text-dim)">No picks yet.</li>`;
-  } else {
-    for (const p of roster) {
-      const li = document.createElement("li");
-      li.innerHTML = `<span>#${p.pick_number} ${escapeHTML(p.name)}</span><span class="pos-tag">${p.position}</span>`;
-      list.appendChild(li);
-    }
+    list.innerHTML = `<div class="empty">No picks yet.</div>`;
+    return;
   }
-  document.getElementById("roster-modal").classList.remove("hidden");
+
+  if (rosterSortMode === "pick") {
+    const group = document.createElement("div");
+    group.className = "roster-group";
+    const ul = document.createElement("ul");
+    for (const p of roster) {
+      ul.appendChild(rosterListItem(p, true));
+    }
+    group.appendChild(ul);
+    list.appendChild(group);
+    return;
+  }
+
+  // group by position, in standard fantasy position order
+  const byPos = {};
+  for (const p of roster) {
+    (byPos[p.position] = byPos[p.position] || []).push(p);
+  }
+  const positions = [
+    ...POSITION_ORDER.filter((pos) => byPos[pos]),
+    ...Object.keys(byPos).filter((pos) => !POSITION_ORDER.includes(pos)),
+  ];
+  for (const pos of positions) {
+    const group = document.createElement("div");
+    group.className = "roster-group";
+    const players = [...byPos[pos]].sort((a, b) => a.pick_number - b.pick_number);
+    group.innerHTML = `<h4>${pos} (${players.length})</h4>`;
+    const ul = document.createElement("ul");
+    for (const p of players) {
+      ul.appendChild(rosterListItem(p, false));
+    }
+    group.appendChild(ul);
+    list.appendChild(group);
+  }
+}
+
+function rosterListItem(p, showPosTag) {
+  const li = document.createElement("li");
+  li.innerHTML = `<span>#${p.pick_number} ${escapeHTML(p.name)}</span>${
+    showPosTag ? `<span class="pos-tag">${p.position}</span>` : `<span class="pos-tag">${p.nfl_team}</span>`
+  }`;
+  return li;
 }
 
 // ---------- Settings modal ----------
@@ -289,6 +342,15 @@ document.getElementById("confirm-ok").addEventListener("click", async () => {
 
 document.getElementById("roster-close").addEventListener("click", () => {
   document.getElementById("roster-modal").classList.add("hidden");
+});
+
+document.querySelectorAll(".sort-tab").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".sort-tab").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    rosterSortMode = btn.dataset.sort;
+    renderRosterList();
+  });
 });
 
 document.getElementById("btn-undo").addEventListener("click", async () => {

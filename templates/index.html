@@ -80,7 +80,11 @@
   <div id="roster-modal" class="modal-overlay hidden">
     <div class="modal">
       <h3 id="roster-title">Roster</h3>
-      <ul id="roster-list"></ul>
+      <div id="roster-sort-toggle" class="sort-toggle">
+        <button class="sort-tab active" data-sort="position">By Position</button>
+        <button class="sort-tab" data-sort="pick">By Draft Order</button>
+      </div>
+      <div id="roster-list"></div>
       <div class="modal-actions">
         <button id="roster-close" class="btn primary">Close</button>
       </div>
