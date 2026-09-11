@@ -1,0 +1,5 @@
+venv/
+__pycache__/
+*.pyc
+data/draft_state.json
+.DS_Store

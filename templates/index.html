@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fantasy Football Live Draft Board</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header id="top-bar">
+    <div id="clock-panel">
+      <div id="on-clock-label">ON THE CLOCK</div>
+      <div id="on-clock-team">—</div>
+      <div id="pick-meta">Pick <span id="pick-number">1</span> · Round <span id="round-number">1</span></div>
+    </div>
+
+    <div id="timer-panel">
+      <div id="timer-display">--</div>
+      <div id="timer-controls">
+        <button id="btn-pause" class="btn small">Pause</button>
+        <button id="btn-restart-timer" class="btn small">Reset Timer</button>
+      </div>
+    </div>
+
+    <div id="header-actions">
+      <button id="btn-undo" class="btn small">Undo Last Pick</button>
+      <button id="btn-settings" class="btn small">Settings</button>
+      <button id="btn-reset" class="btn small danger">Reset Draft</button>
+    </div>
+  </header>
+
+  <main id="main-layout">
+    <section id="board-panel">
+      <div id="board-controls">
+        <input id="search-box" type="text" placeholder="Search players…" autocomplete="off">
+        <div id="position-tabs">
+          <button class="pos-tab active" data-pos="ALL">ALL</button>
+          <button class="pos-tab" data-pos="QB">QB</button>
+          <button class="pos-tab" data-pos="RB">RB</button>
+          <button class="pos-tab" data-pos="WR">WR</button>
+          <button class="pos-tab" data-pos="TE">TE</button>
+          <button class="pos-tab" data-pos="K">K</button>
+          <button class="pos-tab" data-pos="DEF">DEF</button>
+        </div>
+        <label id="show-drafted-toggle">
+          <input type="checkbox" id="show-drafted"> show drafted
+        </label>
+      </div>
+      <div id="player-grid"></div>
+    </section>
+
+    <aside id="side-panel">
+      <div id="draft-complete-banner" class="hidden">🏆 Draft Complete!</div>
+
+      <h2>Draft Order</h2>
+      <ol id="team-order-list"></ol>
+
+      <h2>Recent Picks</h2>
+      <ul id="history-list"></ul>
+    </aside>
+  </main>
+
+  <!-- Confirm pick modal -->
+  <div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h3 id="confirm-title">Draft player?</h3>
+      <p id="confirm-body"></p>
+      <label>Assign to team:
+        <select id="confirm-team-select"></select>
+      </label>
+      <div class="modal-actions">
+        <button id="confirm-cancel" class="btn">Cancel</button>
+        <button id="confirm-ok" class="btn primary">Confirm Pick</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team roster modal -->
+  <div id="roster-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h3 id="roster-title">Roster</h3>
+      <ul id="roster-list"></ul>
+      <div class="modal-actions">
+        <button id="roster-close" class="btn primary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings modal -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal wide">
+      <h3>Draft Settings</h3>
+
+      <label>Number of teams:
+        <input type="number" id="setting-num-teams" min="2" max="20">
+      </label>
+
+      <label>Seconds per pick:
+        <input type="number" id="setting-pick-seconds" min="10" max="600">
+      </label>
+
+      <label>Draft type:
+        <select id="setting-draft-type">
+          <option value="snake">Snake</option>
+          <option value="linear">Linear</option>
+        </select>
+      </label>
+
+      <div id="team-name-inputs"></div>
+
+      <p class="hint">Changing team count or names resets the current pick's timer but keeps drafted players. Reduce team count only before the draft starts.</p>
+
+      <div class="modal-actions">
+        <button id="settings-cancel" class="btn">Cancel</button>
+        <button id="settings-save" class="btn primary">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
